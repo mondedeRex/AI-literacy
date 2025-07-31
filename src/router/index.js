@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Chat from '@/components/Chat'
-import HelloWorld from '@/components/HelloWorld'
 import Report from '@/components/Report'
 import Intro from '@/components/Intro'
 import AIDefinition from '@/components/AIDefinition'
