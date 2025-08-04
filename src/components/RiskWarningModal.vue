@@ -77,7 +77,7 @@ body {
 }
 
 .card-title {
-  color: #000000;
+  color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 15px;
@@ -92,7 +92,7 @@ body {
   line-height: 1;
   padding: 0;
   cursor: pointer;
-  color: #000000;
+  color: red;
 }
 
 .divider {
@@ -107,7 +107,7 @@ body {
 }
 
 .card-text {
-  color: #000000;
+  color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 15px;
@@ -122,7 +122,7 @@ body {
 
 .confirm-button {
   color: rgba(255, 255, 255, 0.8);
-  background-color: #000000;
+  background-color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 12px;

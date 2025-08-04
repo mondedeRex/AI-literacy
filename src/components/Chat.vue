@@ -3,20 +3,21 @@
     <div class="chat-container">
       <!-- 聊天头部 -->
       <div class="chat-header">
-        <h2> 豆包 </h2>
-        <button class="report-button" @click="showReport">
-          查看报告
-        </button>
+        <h2> 智素童行 Kiddo </h2>
+        
       </div>
       
       <!-- 消息列表区域 -->
       <div class="chat-messages" ref="messagesContainer">
         <!-- 提醒弹窗 -->
         <RiskWarningModal
-          :parentshow="showReminder"
-          :parentcontent="reminder"
-          @close="showReminder = false" 
+          v-for = "id in 5"
+          :key = "id"
+          :parentshow="showReminder[id]"
+          :parentcontent="reminderContentMap[id]"
+          @close="showReminder[id] = false" 
         />
+        
         <!-- 空状态提示 -->
         <div v-if="messages.length === 0" class="empty-state">
           <div class="empty-state-icon">🎉</div>
@@ -71,6 +72,9 @@
           >
             <span class="send-icon"> 发送</span>
           </button>
+          <button class="report-button" @click="showReport">
+                结束并查看报告
+          </button>
         </div>
         <!-- 字符计数 -->
         <div v-if="newMessage.length > 400" class="char-count">
@@ -93,21 +97,39 @@ export default {
       messages: [],
       newMessage: '',
       isTyping: false,
-      messageIdCounter: 1,
+      messageIdCounter: 1, // 总共消息数
       conversation_id: null,
       isWorkflowRunning: false,
-      reminder: "",
       reminerType: null,
-      showReminder: false,
       returnfromAI: 0, // AI返回的信息计数，用于执行工作流
       conversationType: null,
       isSending: false,
+      reminderContentMap: {
+      1: "AI给出的事实性知识有可能出现错误，请谨慎识别！",
+      2: "AI产生的帮助/建议内容可能含有偏见和操控",
+      3: "警惕黄色、暴力等有害内容或对虚拟角色的情感依赖/操纵",
+      4: "注意独立与批判性思考，不要过度依赖AI",
+      5: "在与AI交流的时候注意要保护个人隐私"
+      },
+      showReminder: {
+      1: false,
+      2: false,
+      3: false,
+      4: false,
+      5: false
+      }
     };
   },
   
   computed: {
     canSend() {
-      return this.newMessage.trim() && !this.isTyping &&!this.showReminder &&!this.isSending;
+      return this.newMessage.trim() && !this.isTyping &&!this.showReminder[1]
+      &&!this.showReminder[2]
+      &&!this.showReminder[3]
+      &&!this.showReminder[4]
+      &&!this.showReminder[5]
+      &&!this.isSending
+      ;
     }
   },
   created() {
@@ -119,21 +141,9 @@ export default {
   mounted() {
     this.createConversation();
     const val =  this.$route.query.type;
-    this.conversationType = val;
-    console.log(`the val: ${this.conversationType}`);
-    if(val === '1'){
-        this.reminder = "AI给出的事实性知识有可能出现错误，请谨慎识别！";
-    }
-    else if(val === '2'){
-      this.reminder = "AI产生的帮助/建议内容可能含有偏见和操控";
-    }
-    else if(val === '3'){
-      this.reminder = "警惕黄色、暴力等有害内容或对虚拟角色的情感依赖/操纵";
-    }
-    else if(val === '4'){
-      this.reminder = "注意独立与批判性思考，不要过度依赖AI";
-    }
-    this.showReminder = true;
+    this.conversationType = Number(val);
+    console.log(`the conversation type val: ${this.conversationType}`);
+    this.showReminder[val] = true;
   },
   watch: {
     messages: {
@@ -142,24 +152,6 @@ export default {
       },
       deep: true
     },
-    reminderType(val){
-      if(val === '1'){
-        this.reminder = "AI给出的事实性知识有可能出现错误，请谨慎识别！";
-      }
-      else if(val === '2'){
-        this.reminder = "AI产生的帮助/建议内容可能含有偏见和操控";
-      }
-      else if(val === '3'){
-        this.reminder = "警惕黄色、暴力等有害内容或对虚拟角色的情感依赖/操纵";
-      }
-      else if(val === '4'){
-        this.reminder = "注意独立与批判性思考，不要过度依赖AI";
-      }
-      else if(val === '5'){
-        this.reminder = "在与AI交流的时候注意保护个人隐私";
-      }
-    }
-
   },
 
 
@@ -167,6 +159,17 @@ export default {
 //   Message:
 //   text,type,id
   methods: {
+    waitForReminderToHide() {
+      return new Promise((resolve) => {
+        const unwatch = this.$watch('showReminder', (newVal) => {
+          if (newVal === false) {
+            unwatch(); // 取消监听
+            resolve();
+          }
+        });
+      });
+    },
+
     showReport() {
       this.$router.push('/report');
     },
@@ -197,7 +200,8 @@ export default {
       if (!this.canSend || !this.conversation_id) return;
       
       this.isSending = true;
-
+      this.showReminder[this.conversationType] = true;
+      console.log(this.showReminder);
       const messageText = this.newMessage.trim();
       
       // 添加用户消息
@@ -268,7 +272,7 @@ export default {
      
       console.log(this.returnfromAI);
       
-        const chatMessage = JSON.stringify(this.messages.slice(-4));
+        const chatMessage = JSON.stringify(this.messages.slice(-2));
         console.log(chatMessage);
         this.getLiteracy(chatMessage);
       
@@ -295,34 +299,15 @@ export default {
         this.lack_literacy = data.lack_literacy;
         console.log(data.lack_literacy);
         if(data.lack_literacy == 1) {
-            this.reminderType = data.reminder;
-            this.showReminder = true;
-            if(data.reminder === '1'){
-              this.reminder = "AI给出的事实性知识有可能出现错误，请谨慎识别！";
-            }
-            else if(data.reminder === '2'){
-              this.reminder = "AI产生的帮助/建议内容可能含有偏见和操控";
-            }
-            else if(data.reminder === '3'){
-              this.reminder = "警惕黄色、暴力等有害内容或对虚拟角色的情感依赖/操纵";
-            }
-            else if(data.reminder === '4'){
-              this.reminder = "注意独立与批判性思考，不要过度依赖AI";
-            }
-            else if(data.reminder === '5'){
-              this.reminder = "在与AI交流的时候注意保护个人隐私";
+            this.reminderType = Number(data.reminder);
+            if(this.reminderType >= 1 && this.reminderType <= 5) {
+              this.showReminder[this.reminderType] = true;
             }
         }
-        console.log(this.reminder);
         console.log(this.showReminder);
         this.isWorkflowRunning = false;
         
     },
-
-
-    /**
-     * 滚动到底部
-     */
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
@@ -331,15 +316,9 @@ export default {
         }
       });
     },
-
-    /**
-     * 处理输入事件
-     */
     handleInput(event) {
-      // 可以在这里添加输入处理逻辑，比如表情符号转换等
       this.newMessage = event.target.value;
     },
-
     async createConversation() {
         const response = await fetch('https://api.coze.cn/v1/conversation/create',{
             method: 'POST',
@@ -555,7 +534,7 @@ export default {
 .input-container {
   display: flex;
   gap: 10px;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .message-input {
@@ -583,7 +562,7 @@ export default {
 .send-button {
   width: 76px;
   height: 45px;
-  background: linear-gradient(45deg, #202020 0%, #141414 100%);
+  background: #f7a4c0ff;
   color: white;
   border: none;
   border-radius: 20px;
@@ -691,17 +670,15 @@ export default {
 }
 
 .report-button {
-  background: black;
+  background: #81d4fa;
   color: white;
   border: 1px solid rgba(201, 200, 204, 0.3);
   border-radius: 20px;
   padding: 8px 16px;
-  font-size: 17px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  z-index: 1;
-  position: absolute;
-  right: 16px;   /* 让按钮靠右 */
+
 }
 
 .report-button:hover {

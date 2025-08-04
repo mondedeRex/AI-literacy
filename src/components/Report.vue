@@ -66,7 +66,10 @@
 
         <!-- Evaluation Card -->
         <div class="card evaluation-card">
-          <h3 class="section-subtitle">为本次AI的生成内容打分（1-5）</h3>
+          <div style="display: flex; justify-content: center; gap: 20px;">
+          <h3 class="section-subtitle">为本次AI的生成打分</h3>
+          <button class="submit-rating-button" @click="sendRating">提交</button>
+          </div>
           <div class="evaluation-rows">
             <div class="evaluation-row">
               <div class="evaluation-label">
@@ -147,7 +150,25 @@
             </div>
           </div>
         </div> 
+        <!-- Feedback Card -->
+        <div class="card feedback-card">
+          <h3 class="section-subtitle">问题反馈</h3>
+          <p class="feedback-description">如在使用过程中发现事实内容错误、伦理风险等，请反馈给我们。</p>
+          <form class="feedback-form" @submit.prevent="submitFeedback">
+            <input 
+              type="text" 
+              class="feedback-input" 
+              v-model="feedbackText"
+              placeholder="请输入您的反馈意见..."
+            />
+            <button type="submit" class="send-button">
+              <span class="send-button-text">发送</span>
+            </button>
+          </form>
+        </div>
+        <!-- -->
       </div>
+      
     </div>
   </section>
 </template>
@@ -158,13 +179,14 @@ export default {
     data() {
         return {
             messages: [],
-            report: '报告正在生成中，请耐心等待',
+            report: '报告正在生成中，请耐心等待约5~6秒',
             loading: true,
             ratings: {
               relationship: 0,
               quality: 0,
               ethics: 0
-            }
+            },
+            feedbackText: ''
         }
     },
     methods: {
@@ -189,6 +211,26 @@ export default {
         },
         setRating(category, value) {
           this.ratings[category] = value;
+        },
+        submitFeedback() {
+          if (this.feedbackText.trim()) {
+            console.log('反馈内容:', this.feedbackText);
+            this.feedbackText = '';
+            // 这里可以添加提交到后端的逻辑
+            // await this.submitToServer({ feedback: this.feedbackText, ratings: this.ratings });
+            alert('感谢您的反馈！');
+          }
+        },
+        sendRating() {
+          if (this.ratings['relationship']!=0 && this.ratings['ethics'] !=0 && this.ratings['quality']!=0) {
+            console.log('当前评分:', this.ratings);
+            // 这里可以添加提交到后端的逻辑
+            // await this.submitToServer({ feedback: this.feedbackText, ratings: this.ratings });
+            alert('感谢您的评价！');
+          }
+          else{
+            alert('请完整评分后提交');
+          }
         }
     },
     created() {
@@ -282,14 +324,14 @@ button {
   font-weight: 500;
   font-size: 25px;
   color: #404040;
-  margin-top: 15px;
+  margin-top: 8px;
   margin-bottom: 2px;
 }
 
 .section-subtitle {
   font-family: 'Abhaya Libre', serif;
   font-weight: 500;
-  font-size: 25px;
+  font-size: 20px;
   color: #404040;
 }
 
@@ -310,20 +352,20 @@ button {
 
 .risk-card {
   border-radius: 19px;
-  padding: 28px;
+  padding: 20px;
 }
 
 .risk-list {
   margin-top: 25px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 12px;
 }
 
 .risk-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding-bottom: 10px;
   border-bottom: 0.5px solid #ececec;
 }
@@ -335,8 +377,8 @@ button {
 
 .risk-icon-wrapper {
   position: relative;
-  width: 27px;
-  height: 27px;
+  width: 20px;
+  height: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -373,9 +415,12 @@ button {
   line-height: 1.3;
 }
 
-.literacy-goals-card, .evaluation-card, .feedback-card {
+.literacy-goals-card, .feedback-card {
   border-radius: 19px;
   padding: 20px;
+}
+.evaluation-card{
+  border-radius: 19px;
 }
 
 .goals-container {
@@ -400,15 +445,14 @@ button {
 .goal-title {
   font-family: 'Lato', sans-serif;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 16px;
   color: #696969;
-  margin-bottom: 12px;
 }
 
 .goal-icon {
   width: auto;
-  height: 42px;
-  font-size: 42px;
+  height: 35px;
+  font-size: 35px;
   margin-bottom: 12px;
 }
 
@@ -426,7 +470,8 @@ button {
   margin-top: 25px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  align-items: center;
+  gap: 10px;
 }
 
 .evaluation-row {
@@ -446,8 +491,8 @@ button {
 
 .eval-icon-wrapper {
   position: relative;
-  width: 43px;
-  height: 43px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -488,17 +533,30 @@ button {
 
 .rating-scale {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   flex-grow: 1;
-  justify-content: space-between;
+  justify-content: left;
 }
 
 .rating-item {
   position: relative;
-  width: 29px;
-  height: 52px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
 }
+
 
 .rating-item span {
   position: absolute;
@@ -507,7 +565,7 @@ button {
   transform: translateX(-50%);
   font-family: 'Outfit', sans-serif;
   font-weight: 900;
-  font-size: 17px;
+  font-size: 13px;
   letter-spacing: 0.34px;
 }
 
@@ -524,22 +582,27 @@ button {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 28.5px;
-  height: 28.2px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 2px solid #ddd;
   background-color: #f8f8f8;
   transition: all 0.2s ease;
 }
 
-.rating-button:hover {
-  border-color: #197bbd;
-  background-color: #e6f3ff;
-}
+
 
 .rating-button.selected {
-  background-color: #197bbd;
-  border-color: #197bbd;
+  background-color: gold;
+  border-color: gold;
+}
+.submit-rating-button {
+  padding: 3px 16px;
+  border: 2px solid #f7a4c0ff;
+  background-color: #f7a4c0ff;
+  border-color: #f7a4c0ff;
+  border-radius: 20px;
+  color: white;
 }
 
 .feedback-card {
@@ -549,15 +612,15 @@ button {
 .feedback-description {
   font-family: 'Abhaya Libre', serif;
   font-weight: 500;
-  font-size: 10px;
+  font-size: 12px;
   color: #404040;
-  margin-top: 13px;
+  margin-top: 6px;
 }
 
 .feedback-form {
   margin-top: 5px;
   position: relative;
-  height: 51px;
+  height: 35px;
 }
 
 .feedback-input {
@@ -565,7 +628,7 @@ button {
   height: 100%;
   border: 1px solid #197bbd;
   border-radius: 8px;
-  padding: 10px 70px 10px 15px;
+  padding: 10px 40px 10px 15px;
   font-size: 16px;
 }
 

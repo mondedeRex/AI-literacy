@@ -100,7 +100,21 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+.suggestion-item:nth-child(1) {
+  background-color: #f48fb1; /* 粉红 */
+}
 
+.suggestion-item:nth-child(2) {
+  background-color: #81d4fa; /* 天蓝 */
+}
+
+.suggestion-item:nth-child(3) {
+  background-color: #aed581; /* 草绿 */
+}
+
+.suggestion-item:nth-child(4) {
+  background-color: #ffd54f; /* 柠檬黄 */
+}
 .suggestion-item:hover {
   background-color: #868585db;
 }

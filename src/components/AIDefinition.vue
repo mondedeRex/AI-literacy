@@ -4,10 +4,18 @@
     <header class="page-header">
       <div class="header-left">
         <div class="dropdown-wrapper">
-          豆包
+          智素童行 Kiddo
         </div>
       </div>
-      <h1 class="page-title">AI的知识卡片 ({{counter}}/4)</h1>
+      <h1 class="page-title" v-if="counter==1">AI的介绍</h1>
+      <h1 class="page-title" v-if="counter==2">AI的基本原理</h1>
+      <h1 class="page-title" v-if="counter==3">AI的应用场景</h1>
+      <h1 class="page-title" v-if="counter==4">AI的局限性</h1>
+      <div class="header-right">
+        <div class="dropdown-wrapper">
+          AI 知识 {{counter}}/4
+        </div>
+      </div>
     </header>
 
     <!-- Main Content -->
@@ -45,10 +53,10 @@
 
     <!-- Footer with Next Button -->
     <footer class="page-footer">
-      <button class="button" @click="goBefore">
+      <button class="button1" @click="goBefore">
         <span>上一页</span>
       </button>
-      <button class="button" @click="goNext">
+      <button class="button2" @click="goNext">
         {{ counter == 4 ? "开始对话": "下一页" }}
       </button>
     </footer>
@@ -176,8 +184,20 @@ export default {
   gap: 40px;
 }
 
-.button {
-  background: #1e1e1e;
+.button2 {
+  background: #f7a4c0ff;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 9px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(239, 240, 240, 0.3);
+}
+.button1 {
+  background: #81d4fa;
   color: white;
   border: none;
   border-radius: 40px;
@@ -189,11 +209,6 @@ export default {
   box-shadow: 0 2px 8px rgba(239, 240, 240, 0.3);
 }
 
-.button:hover {
-  background: #d9dbdb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(225, 226, 225, 0.4);
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {
