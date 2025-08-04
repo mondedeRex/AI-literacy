@@ -8,16 +8,16 @@
     <!-- 原本的内容 -->
     <section id="prompt-suggestions" class="prompt-suggestions-section">
       <div class="suggestions-container">
-        <button class="suggestion-item" @click="hoptochat">
+        <button class="suggestion-item" @click="hoptochat" id="1">
           <span class="suggestion-text">询问事实性知识</span>
         </button>
-        <button class="suggestion-item" @click="hoptochat">
+        <button class="suggestion-item" @click="hoptochat" id="2">
           <span class="suggestion-text">寻求建议或帮助</span>
         </button>
-        <button class="suggestion-item" @click="hoptochat">
+        <button class="suggestion-item" @click="hoptochat" id="3">
           <span class="suggestion-text">娱乐内容生成或角色扮演</span>
         </button>
-        <button class="suggestion-item" @click="hoptochat">
+        <button class="suggestion-item" @click="hoptochat" id="4">
           <span class="suggestion-text">学习/学术类任务</span>
         </button>
       </div>
@@ -30,7 +30,8 @@ export default {
   name: 'ChooseTheme',
   methods: {
     hoptochat(){
-        this.$router.push('/chat');
+        const id = event.currentTarget.id;
+        this.$router.push({path: '/chat',query: {type: id}});
     }
   }
 };

@@ -7,46 +7,38 @@
           豆包
         </div>
       </div>
-      <h1 class="page-title">AI的知识卡片</h1>
+      <h1 class="page-title">AI的知识卡片 ({{counter}}/4)</h1>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
+      <div class="image-container">
+        <img :src="getImage(counter)" alt="AI illustration"/>
+      </div>
       <div class="content-container">
         <div class="definition-text" v-if="counter == 1">
-          <p>
-            人工智能（AI）是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。它并非指网人类一样拥有自主意识的"生命体"，而是通过计算机程序来模拟、对人类思维和中枢的学习、推理、判断、规划等功力进行演算。
-          </p>
-          <p>
-            比如我们日常常使用的语音助手、能听懂语音内容并结合共问回应，就是AI在模拟人类的语音理解和交流能力；还有诸如物软件的智能推荐，是AI根据人类关推荐音乐或视频内容的思维过程。
-          </p>
+          <p>生成式 AI 就像会思考的 “超级大脑”，</p>
+          <p>能根据你给它的提示创作新内容，比如陪孩子聊天、讲睡前故事。</p>
+          <p>它不是简单照搬答案，而是像家长编故事那样，</p>
+          <p>用自己的 “理解” 生成新鲜内容。</p>
         </div>
         <div class="definition-text" v-if="counter == 4">
-          <p>
-            尽管 AI 功能强大，但也存在一定的局限性。​
-          </p>
-          <p>
-            AI 缺乏真正的情感理解和创造力，它只能根据预设的算法和数据做出反应，无法像人类一样体会情感的细腻变化。比如当孩子因为委屈而哭泣时，AI 能识别出哭泣的声音，却不能真正理解孩子内心的感受。​
-          </p>
-          <p>
-            AI 的表现高度依赖数据质量和数量，如果输入的数据不准确或不全面，其得出的结果可能会出现偏差。在育儿场景中，如果家长输入的孩子信息有误，AI 给出的建议可能就不适合孩子。​
-          </p>
-          <p>
-            同时，AI 在处理复杂、突发的情况时，灵活性和应变能力不如人类。遇到一些超出预设范围的育儿问题，AI 可能无法给出有效的解决方案，还需要家长结合自身经验做出判断。
-          </p>
+          <p>生成式人工智能并不理解自身所生成的内容，它的工作过程像个 “黑箱”，</p>
+          <p>依赖真实世界内容数据集进行概率统计来预测内容，</p>
+          <p>所以可能说错育儿知识，比如搞错 “辅食添加时间”。​</p>
+          <p>而且它不懂孩子的真实情绪，没法像爸妈那样给孩子温暖的拥抱和关心。</p>
         </div>
         <div class="definition-text" v-if="counter == 2">
-          <p>AI 具备多种核心功能，这些功能使其能够处理复杂任务。</p>
-          <p>数据处理与分析是 AI 的重要能力，它可以快速处理海量数据，从中提取有价值的信息。在育儿场景中，AI 可以分析孩子的饮食、睡眠等数据，为家长提供健康建议。</p>
-          <p>模式识别功能让 AI 能够识别图像、声音、文字等中的规律和模式。例如，AI 可以通过识别孩子的表情，判断其情绪状态。</p>
-          <p>自主学习能力是 AI 的显著特点，它能通过不断接收新数据，调整自身算法，提高处理任务的准确性。就像育儿 APP 中的 AI 问答系统，会随着接收的育儿问题增多，回答得越来越精准。</p>
+          <p>它像海绵一样 “读” 过海量书籍和对话，记住语言规律后，</p>
+          <p>会通过概率预测下一个词，一步步拼出回应。</p>
+          <p>比如你问 “怎么哄哭闹的宝宝”，它会算着 “可能性”，</p>
+          <p>把学过的育儿知识串成一句句建议。</p>
         </div>
         <div class="definition-text" v-if="counter == 3">
-          <p>AI 的应用已经渗透到多个领域，在育儿方面也有广泛应用。</p>
-          <p>在早教领域，智能早教机器人能根据孩子的年龄和学习进度，推送合适的启蒙内容，如故事、儿歌、小游戏等，助力孩子早期发展。</p>
-          <p>在健康管理方面，一些 AI 育儿工具可以记录孩子的生长数据，如身高、体重，对比标准生长曲线，及时提醒家长孩子的生长是否在正常范围。</p>
-          <p>此外，AI 还能为家长提供育儿知识问答服务，解答家长在育儿过程中遇到的各种问题，如孩子哭闹不止怎么办、如何培养孩子的良好习惯等。</p>
-
+          <p>家长可以问它 “宝宝发烧怎么护理”“如何培养专注力”，获取育儿知识和建议。​</p>
+          <p>家长也可以陪伴孩子一起问 “为什么月亮会跟着人走”等好奇问题；</p>
+          <p>它还能给孩子讲故事、玩角色扮演、陪玩数学小游戏，</p>
+          <p>甚至辅助孩子认字、学儿歌。</p>
         </div>
       </div>
     </main>
@@ -64,6 +56,11 @@
 </template>
 
 <script>
+import logo from '@/assets/logo.png'
+import img1 from '@/assets/img1.png'
+import img2 from '@/assets/img2.png'
+import img3 from '@/assets/img3.png'
+import img4 from '@/assets/img4.png'
 export default {
   name: 'AIDefinition',
   data(){
@@ -83,6 +80,14 @@ export default {
     goBefore() {
       if(this.counter != 1) {
           this.counter--;
+      }
+    },
+    getImage(counter){
+      switch(counter){
+        case 1: return img1;
+        case 2: return img2;
+        case 3: return img3;
+        case 4: return img4;
       }
     }
   }
@@ -123,13 +128,23 @@ export default {
 /* Main Content */
 .main-content {
   flex: 1;
-  padding: 48px 24px;
+  padding: 18px 24px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
-
-.content-container {
+.image-container{
+  margin-bottom: 25px;
+}
+.image-container img{
+  width: 100%;
   max-width: 600px;
+  height:auto;
+  border-radius: 50px;
+}
+.content-container {
+  max-width: 850px;
   width: 100%;
 }
 
@@ -138,14 +153,15 @@ export default {
   padding: 32px;
   border-radius: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  line-height: 1.8;
+  line-height: 1.2;
 }
 
 .definition-text p {
   margin: 0 0 20px 0;
-  font-size: 16px;
+  font-size: 18px;
   color: #495057;
-  text-align: justify;
+  text-align: center;
+  font-weight:550;
 }
 
 .definition-text p:last-child {

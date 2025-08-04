@@ -96,15 +96,18 @@ export default {
       messageIdCounter: 1,
       conversation_id: null,
       isWorkflowRunning: false,
-      reminder: "AI给出的事实性知识有可能出现错误，请谨慎识别！",
+      reminder: "",
       reminerType: null,
-      showReminder: false
+      showReminder: false,
+      returnfromAI: 0, // AI返回的信息计数，用于执行工作流
+      conversationType: null,
+      isSending: false,
     };
   },
   
   computed: {
     canSend() {
-      return this.newMessage.trim() && !this.isTyping;
+      return this.newMessage.trim() && !this.isTyping &&!this.showReminder &&!this.isSending;
     }
   },
   created() {
@@ -115,6 +118,22 @@ export default {
   },
   mounted() {
     this.createConversation();
+    const val =  this.$route.query.type;
+    this.conversationType = val;
+    console.log(`the val: ${this.conversationType}`);
+    if(val === '1'){
+        this.reminder = "AI给出的事实性知识有可能出现错误，请谨慎识别！";
+    }
+    else if(val === '2'){
+      this.reminder = "AI产生的帮助/建议内容可能含有偏见和操控";
+    }
+    else if(val === '3'){
+      this.reminder = "警惕黄色、暴力等有害内容或对虚拟角色的情感依赖/操纵";
+    }
+    else if(val === '4'){
+      this.reminder = "注意独立与批判性思考，不要过度依赖AI";
+    }
+    this.showReminder = true;
   },
   watch: {
     messages: {
@@ -123,21 +142,12 @@ export default {
       },
       deep: true
     },
-    showReminder: {
-      handler(newVal) {
-        if(newVal) {
-           setTimeout(() => {
-            this.showReminder = false;
-            }, 10000);
-        }
-      }
-    },
     reminderType(val){
       if(val === '1'){
         this.reminder = "AI给出的事实性知识有可能出现错误，请谨慎识别！";
       }
       else if(val === '2'){
-        this.reminder = "AI产生的内容可能含有偏见和操控";
+        this.reminder = "AI产生的帮助/建议内容可能含有偏见和操控";
       }
       else if(val === '3'){
         this.reminder = "警惕黄色、暴力等有害内容或对虚拟角色的情感依赖/操纵";
@@ -185,6 +195,8 @@ export default {
 
     async sendMessage() {
       if (!this.canSend || !this.conversation_id) return;
+      
+      this.isSending = true;
 
       const messageText = this.newMessage.trim();
       
@@ -242,6 +254,7 @@ export default {
                         text: '',
                         type: 'received'
                     });
+                    this.returnfromAI++;
                     break;
                 case 'conversation.message.delta':
                     this.messages[this.messages.length - 1].text += data.content;
@@ -251,16 +264,14 @@ export default {
             }
         }
       }
-      // // FOR TEST
-      // const chatMessage = JSON.stringify(this.messages.slice(-10));
-      // this.getLiteracy(chatMessage);
-      // THIS IS THE REAL ONE
-      console.log(this.messageIdCounter);
-      if(this.messageIdCounter % 10 == 1) {
-        const chatMessage = JSON.stringify(this.messages.slice(-10));
+      this.isSending = false;
+     
+      console.log(this.returnfromAI);
+      
+        const chatMessage = JSON.stringify(this.messages.slice(-4));
         console.log(chatMessage);
         this.getLiteracy(chatMessage);
-      }
+      
     },
     // 工作流
     async getLiteracy(chatMessage) {
@@ -286,6 +297,21 @@ export default {
         if(data.lack_literacy == 1) {
             this.reminderType = data.reminder;
             this.showReminder = true;
+            if(data.reminder === '1'){
+              this.reminder = "AI给出的事实性知识有可能出现错误，请谨慎识别！";
+            }
+            else if(data.reminder === '2'){
+              this.reminder = "AI产生的帮助/建议内容可能含有偏见和操控";
+            }
+            else if(data.reminder === '3'){
+              this.reminder = "警惕黄色、暴力等有害内容或对虚拟角色的情感依赖/操纵";
+            }
+            else if(data.reminder === '4'){
+              this.reminder = "注意独立与批判性思考，不要过度依赖AI";
+            }
+            else if(data.reminder === '5'){
+              this.reminder = "在与AI交流的时候注意保护个人隐私";
+            }
         }
         console.log(this.reminder);
         console.log(this.showReminder);
