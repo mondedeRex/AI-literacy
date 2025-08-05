@@ -5,7 +5,7 @@ import Report from '@/components/Report'
 import Intro from '@/components/Intro'
 import AIDefinition from '@/components/AIDefinition'
 import ChooseTheme from '@/components/ChooseTheme'
-import HelloWorld from '@/components/HelloWorld'
+import HelloWorld from '@/components/ChooseTheme'
 Vue.use(Router)
 
 export default new Router({
@@ -24,19 +24,18 @@ export default new Router({
     {
       path: '/intro',
       name: 'Intro',
-      component: Intro
+      component: Intro,
+      alias: '/'
     },
     {
       path: '/ai-definition',
       name: 'AIDefinition',
-      component: AIDefinition,
-      alias: '/'
+      component: AIDefinition
     },
     {
       path: '/helloworld',
       name: 'HelloWorld',
-      component: HelloWorld,
-      alias: '/'
+      component: HelloWorld
     },
     {
       path: '/choosetheme',

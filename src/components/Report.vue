@@ -68,7 +68,7 @@
         <div class="card evaluation-card">
           <div style="display: flex; justify-content: center; gap: 20px;">
           <h3 class="section-subtitle">为本次AI的生成打分</h3>
-          <button class="submit-rating-button" @click="sendRating">提交</button>
+          <button class="submit-rating-button" @click="sendRating" :disabled="isDisabled">提交</button>
           </div>
           <div class="evaluation-rows">
             <div class="evaluation-row">
@@ -86,9 +86,6 @@
                   class="rating-item" 
                   @click="setRating('relationship', num)"
                 >
-                  <span :class="num === 1 ? 'rating-number-dark' : 'rating-number-red'">
-                    {{ num }}.
-                  </span>
                   <div 
                     class="rating-button" 
                     :class="{ selected: ratings.relationship >= num }"
@@ -112,9 +109,6 @@
                   class="rating-item" 
                   @click="setRating('quality', num)"
                 >
-                  <span :class="num === 1 ? 'rating-number-dark' : 'rating-number-red'">
-                    {{ num }}.
-                  </span>
                   <div 
                     class="rating-button" 
                     :class="{ selected: ratings.quality >= num }"
@@ -138,9 +132,6 @@
                   class="rating-item" 
                   @click="setRating('ethics', num)"
                 >
-                  <span :class="num === 1 ? 'rating-number-dark' : 'rating-number-red'">
-                    {{ num }}.
-                  </span>
                   <div 
                     class="rating-button" 
                     :class="{ selected: ratings.ethics >= num }"
@@ -186,7 +177,9 @@ export default {
               quality: 0,
               ethics: 0
             },
-            feedbackText: ''
+            feedbackText: '',
+            isDisabled: false,
+            user_id: 'default_user'
         }
     },
     methods: {
@@ -212,21 +205,53 @@ export default {
         setRating(category, value) {
           this.ratings[category] = value;
         },
-        submitFeedback() {
+        async submitFeedback() {
           if (this.feedbackText.trim()) {
             console.log('反馈内容:', this.feedbackText);
+            const text = this.feedbackText;
             this.feedbackText = '';
-            // 这里可以添加提交到后端的逻辑
-            // await this.submitToServer({ feedback: this.feedbackText, ratings: this.ratings });
+            const response = await fetch('https://api.coze.cn/v1/workflow/run',{
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer pat_eF32ePMTr4z4socqdFmLNyRVMfVi4db2ovENGHqjhTJbV6WVTdL1QK59C6bxXrYu',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    workflow_id: '7534938986075439131',
+                    parameters:{
+                      userid: this.user_id,
+                      suggestion: text,
+                    }
+                })      
+            });
+            const responsejson  = await response.json();
             alert('感谢您的反馈！');
           }
         },
-        sendRating() {
+        async sendRating() {
+          console.log('当前用户ID:', this.user_id);
           if (this.ratings['relationship']!=0 && this.ratings['ethics'] !=0 && this.ratings['quality']!=0) {
-            console.log('当前评分:', this.ratings);
-            // 这里可以添加提交到后端的逻辑
-            // await this.submitToServer({ feedback: this.feedbackText, ratings: this.ratings });
             alert('感谢您的评价！');
+            this.isDisabled = true;
+            console.log(this.ratings);
+            const response = await fetch('https://api.coze.cn/v1/workflow/run',{
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer pat_eF32ePMTr4z4socqdFmLNyRVMfVi4db2ovENGHqjhTJbV6WVTdL1QK59C6bxXrYu',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    workflow_id: '7534938376186282018',
+                    parameters:{
+                      userid: this.user_id,
+                      rate1: this.ratings.relationship,
+                      rate2: this.ratings.quality,
+                      rate3: this.ratings.ethics,
+                    }
+                })      
+            });
+            const responsejson  = await response.json();
+            console.log('评分提交结果:', responsejson);
           }
           else{
             alert('请完整评分后提交');
@@ -244,6 +269,8 @@ export default {
             }
         }
         this.fetchReport(this.messages);
+        this.user_id = sessionStorage.getItem('user_id');
+        console.log('当前用户ID:', this.user_id);
     },
     computed: {
       compiledMarkdown() {
@@ -540,8 +567,8 @@ button {
 
 .rating-item {
   position: relative;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   cursor: pointer;
   clip-path: polygon(
     50% 0%,
@@ -565,7 +592,7 @@ button {
   transform: translateX(-50%);
   font-family: 'Outfit', sans-serif;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 0.34px;
 }
 
@@ -582,8 +609,8 @@ button {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px solid #ddd;
   background-color: #f8f8f8;

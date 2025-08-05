@@ -61,8 +61,8 @@ body {
   background-color: #ffffff;
   border-radius: 22px;
   box-shadow: 0px 4.35px 21.75px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  max-width: 344px;
+  padding: 24px 50px;
+  max-width: 564px;
   width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -80,7 +80,7 @@ body {
   color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1.2;
   margin: 0;
 }
@@ -110,7 +110,7 @@ body {
   color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1.5;
   margin: 0;
 }
@@ -125,7 +125,7 @@ body {
   background-color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 20px;
   line-height: 1.2;
   border: none;
   border-radius: 999px;

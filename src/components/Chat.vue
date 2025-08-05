@@ -117,7 +117,8 @@ export default {
       3: false,
       4: false,
       5: false
-      }
+      },
+      user_id:"",
     };
   },
   
@@ -144,6 +145,17 @@ export default {
     this.conversationType = Number(val);
     console.log(`the conversation type val: ${this.conversationType}`);
     this.showReminder[val] = true;
+
+    const existingId = sessionStorage.getItem('user_id');
+    if (existingId) {
+      this.user_id = existingId;
+      console.log("Loaded existing user_id from sessionStorage:", this.user_id);
+    } else {
+      // 没有就生成新的
+      this.user_id = this.generateUserId();
+      sessionStorage.setItem('user_id', this.user_id);
+      console.log("Generated new user_id and stored in sessionStorage:", this.user_id);
+    }
   },
   watch: {
     messages: {
@@ -159,19 +171,12 @@ export default {
 //   Message:
 //   text,type,id
   methods: {
-    waitForReminderToHide() {
-      return new Promise((resolve) => {
-        const unwatch = this.$watch('showReminder', (newVal) => {
-          if (newVal === false) {
-            unwatch(); // 取消监听
-            resolve();
-          }
-        });
-      });
+    generateUserId(){
+      return "user_" + Date.now() + "_" + Math.floor(Math.random() * 1000000);
     },
-
     showReport() {
-      this.$router.push('/report');
+      
+      this.$router.push({path:'/report'});
     },
 
     showWelcomeMessage() {
@@ -198,9 +203,16 @@ export default {
 
     async sendMessage() {
       if (!this.canSend || !this.conversation_id) return;
-      
-      this.isSending = true;
       this.showReminder[this.conversationType] = true;
+      this.isSending = true;
+      await new Promise((resolve) => {
+        const timer = setInterval(() => {
+          if (!this.showReminder[this.conversationType]) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, 50); // 每 50ms 检查一次
+      });
       console.log(this.showReminder);
       const messageText = this.newMessage.trim();
       
@@ -215,17 +227,17 @@ export default {
       const response = await fetch(` https://api.coze.cn/v3/chat?conversation_id=${this.conversation_id}`,{
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer pat_5h0X5vJNTAZF8RmkIELGq2okxkHnD9Wa1xSbIzh57ppqQ9U7Odp5SSaEHpqrAhlc',
+                'Authorization': 'Bearer pat_eF32ePMTr4z4socqdFmLNyRVMfVi4db2ovENGHqjhTJbV6WVTdL1QK59C6bxXrYu',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: '000',
-                bot_id: '7529741715528974370',
+                user_id: this.user_id,
+                bot_id: '7534757253950586922',
                 role: 'user',
                 stream: true,
                 additional_messages: [{
                     role: 'user',
-                    content: messageText,
+                    content:  "系统prompt：你的回答不要超过8句话。用户prompt：" + messageText,
                     content_type: 'text'
                 }],
             }),
@@ -271,10 +283,15 @@ export default {
       this.isSending = false;
      
       console.log(this.returnfromAI);
+       
+      // 调用工作流，检查是否有问题
+      const chatMessage = JSON.stringify(this.messages.slice(-2));
+      console.log(chatMessage);
+      this.getLiteracy(chatMessage);
       
-        const chatMessage = JSON.stringify(this.messages.slice(-2));
-        console.log(chatMessage);
-        this.getLiteracy(chatMessage);
+      // 存储数据
+      this.storage(this.messages[this.messages.length -1]['text'],"system");
+      this.storage(this.messages[this.messages.length -2]['text'],"user");
       
     },
     // 工作流
@@ -308,6 +325,25 @@ export default {
         this.isWorkflowRunning = false;
         
     },
+    async storage(content,role){
+      const response = await fetch('https://api.coze.cn/v1/workflow/run',{
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer pat_eF32ePMTr4z4socqdFmLNyRVMfVi4db2ovENGHqjhTJbV6WVTdL1QK59C6bxXrYu',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                workflow_id: '7534925518144733218',
+                parameters:{
+                  content: content,
+                  userid: this.user_id,
+                  role: role
+                }
+            })      
+        });
+        const responsejson  = await response.json()
+        console.log(responsejson);
+    },
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
@@ -323,16 +359,33 @@ export default {
         const response = await fetch('https://api.coze.cn/v1/conversation/create',{
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer pat_5h0X5vJNTAZF8RmkIELGq2okxkHnD9Wa1xSbIzh57ppqQ9U7Odp5SSaEHpqrAhlc',
+                'Authorization': 'Bearer pat_eF32ePMTr4z4socqdFmLNyRVMfVi4db2ovENGHqjhTJbV6WVTdL1QK59C6bxXrYu',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                bot_id: '7529741715528974370' // 测试的机器人
+                bot_id: '7534757253950586922' // 测试的机器人
             })
         });
         const responsejson = await response.json();
+        const tmp_conversation_id = responsejson.data.id;
         this.conversation_id = responsejson.data.id;
         console.log(this.conversation_id);
+
+        // // 初始化消息
+        // const setPromptResponse = await fetch(`https://api.coze.cn/v1/conversation/message/create?conversation_id=${tmp_conversation_id}`,{
+        //   method: 'POST',
+        //   headers: {
+        //           'Authorization': 'Bearer pat_5h0X5vJNTAZF8RmkIELGq2okxkHnD9Wa1xSbIzh57ppqQ9U7Odp5SSaEHpqrAhlc',
+        //           'Content-Type': 'application/json'
+        //   },
+        //   body: JSON.stringify({
+        //           role: 'system',
+        //           content_type: 'text',
+        //           content:"以下是系统prompt：你的所有回答，必须简单扼要，不超过5句话。"
+        //   })
+        // });
+        // const setPromptResponseJson = await setPromptResponse.json();
+        // console.log(setPromptResponseJson.data);
     },
     
   }

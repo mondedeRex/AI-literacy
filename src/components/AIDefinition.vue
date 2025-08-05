@@ -89,6 +89,9 @@ export default {
       if(this.counter != 1) {
           this.counter--;
       }
+      else{
+          this.$router.push('/');
+      }
     },
     getImage(counter){
       switch(counter){
