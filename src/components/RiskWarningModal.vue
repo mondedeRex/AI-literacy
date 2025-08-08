@@ -55,6 +55,7 @@ body {
   min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
+  
 }
 
 .risk-notice-card {
@@ -80,7 +81,7 @@ body {
   color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.2;
   margin: 0;
 }
@@ -88,7 +89,7 @@ body {
 .close-button {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
   padding: 0;
   cursor: pointer;
@@ -110,7 +111,7 @@ body {
   color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.5;
   margin: 0;
 }
@@ -125,11 +126,13 @@ body {
   background-color: red;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 14px;
   line-height: 1.2;
   border: none;
   border-radius: 999px;
-  padding: 8px 18px;
+  padding: 5px 15px;
   cursor: pointer;
+  white-space: nowrap;
+  
 }
 </style>

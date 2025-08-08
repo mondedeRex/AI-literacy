@@ -21,7 +21,7 @@
         <!-- 空状态提示 -->
         <div v-if="messages.length === 0" class="empty-state">
           <div class="empty-state-icon">🎉</div>
-          <div>嗨，我是豆包，有什么我可以帮忙的吗</div>
+          <div>嗨，我是智素童行 Kiddo，有什么我可以帮忙的吗</div>
         </div>
         <!-- 消息列表 -->
         <div 
@@ -32,15 +32,7 @@
           <div class="message-bubble" v-html="message.text">
           </div>
         </div>
-        <!-- 工作流状态组件 -->
-        <div v-if="isWorkflowRunning" class="workflow-status">
-            <div class="workflow-card">
-                <div class="workflow-content">
-                    <div class="workflow-spinner"></div>
-                    <span class="workflow-text">实时记录中...</span>
-                </div>
-            </div>
-        </div>
+
         <!-- 正在输入指示器 -->
         <div v-if="isTyping" class="typing-indicator">
           <div class="typing-dots">
@@ -677,45 +669,7 @@ export default {
   }
 }
 
-/* 工作流 */
-.workflow-status {
-    margin: 16px 0;
-    display: flex;
-    justify-content: center;
-}
 
-.workflow-card {
-    background: white;
-    border: 2px solid #e8eaed;
-    border-radius: 12px;
-    padding: 16px 20px;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-    background: white
-}
-
-.workflow-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.workflow-text {
-    font-size: 14px;
-    color: black;
-    font-weight: 500;
-}
-
-/* 加载动画 */
-.workflow-spinner {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid #e5e7eb;
-    border-top: 2px solid black;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-right: 8px;
-}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

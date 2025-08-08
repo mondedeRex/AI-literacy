@@ -158,6 +158,11 @@
           </form>
         </div>
         <!-- -->
+        <div>
+        <button @click="backhome" class="returnhome-button">
+          返回首页
+        </button>
+      </div>
       </div>
       
     </div>
@@ -183,6 +188,12 @@ export default {
         }
     },
     methods: {
+        backhome() {
+            // 返回首页
+            sessionStorage.removeItem('user_id');
+            localStorage.removeItem('messages');
+            this.$router.push('/');
+        },
         async fetchReport(chatMessage) {
             const response = await fetch('https://api.coze.cn/v1/workflow/run', {
                 method: 'POST',
@@ -498,12 +509,14 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  
   gap: 10px;
 }
 
 .evaluation-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
 }
 
@@ -562,14 +575,23 @@ button {
   display: flex;
   gap: 20px;
   flex-grow: 1;
-  justify-content: left;
 }
 
 .rating-item {
   position: relative;
-  width: 34px;
-  height: 34px;
   cursor: pointer;
+  width: 40px;
+  height: 40px;
+  overflow: visible;
+  aspect-ratio: 1 / 1;
+}
+
+.rating-button {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #ddd;
+  background-color: #f8f8f8;
+  transition: all 0.2s ease;
   clip-path: polygon(
     50% 0%,
     61% 35%,
@@ -585,39 +607,6 @@ button {
 }
 
 
-.rating-item span {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 900;
-  font-size: 15px;
-  letter-spacing: 0.34px;
-}
-
-.rating-number-dark { 
-  color: #121e3f; 
-}
-
-.rating-number-red { 
-  color: #ff6666; 
-}
-
-.rating-button {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid #ddd;
-  background-color: #f8f8f8;
-  transition: all 0.2s ease;
-}
-
-
 
 .rating-button.selected {
   background-color: gold;
@@ -625,6 +614,14 @@ button {
 }
 .submit-rating-button {
   padding: 3px 16px;
+  border: 2px solid #f7a4c0ff;
+  background-color: #f7a4c0ff;
+  border-color: #f7a4c0ff;
+  border-radius: 20px;
+  color: white;
+}
+.returnhome-button {
+  padding: 7px 20px;
   border: 2px solid #f7a4c0ff;
   background-color: #f7a4c0ff;
   border-color: #f7a4c0ff;
@@ -718,5 +715,4 @@ button {
   }
 }
 </style>
-
 
