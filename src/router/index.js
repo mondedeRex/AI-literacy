@@ -9,7 +9,7 @@ import HelloWorld from '@/components/ChooseTheme'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/chat',

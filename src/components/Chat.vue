@@ -329,7 +329,8 @@ export default {
                 parameters:{
                   content: content,
                   userid: this.user_id,
-                  role: role
+                  role: role,
+                  type: this.conversationType.toString()
                 }
             })      
         });

@@ -190,7 +190,6 @@ export default {
     methods: {
         backhome() {
             // 返回首页
-            sessionStorage.removeItem('user_id');
             localStorage.removeItem('messages');
             this.$router.push('/');
         },
