@@ -169,7 +169,7 @@
   </section>
 </template>
 <script>
-const WORKFLOW = '7530654402718269479';
+const WORKFLOW = '7539535603063816226';
 export default {
     name: 'Report',
     data() {
@@ -197,7 +197,7 @@ export default {
             const response = await fetch('https://api.coze.cn/v1/workflow/run', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer pat_5h0X5vJNTAZF8RmkIELGq2okxkHnD9Wa1xSbIzh57ppqQ9U7Odp5SSaEHpqrAhlc',
+                    'Authorization': 'Bearer pat_eF32ePMTr4z4socqdFmLNyRVMfVi4db2ovENGHqjhTJbV6WVTdL1QK59C6bxXrYu',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({

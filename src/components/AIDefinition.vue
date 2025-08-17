@@ -11,16 +11,17 @@
       <h1 class="page-title" v-if="counter==2">AI的基本原理</h1>
       <h1 class="page-title" v-if="counter==3">AI的应用场景</h1>
       <h1 class="page-title" v-if="counter==4">AI的局限性</h1>
+      <h1 class="page-title" v-if="counter==5">您的验证码</h1>
       <div class="header-right">
         <div class="dropdown-wrapper">
-          AI 知识 {{counter}}/4
+          AI 知识 {{counter}}/5
         </div>
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
-      <div class="image-container">
+      <div class="image-container" v-if="counter != 5">
         <img :src="getImage(counter)" alt="AI illustration"/>
       </div>
       <div class="content-container">
@@ -48,6 +49,13 @@
           <p>它还能给孩子讲故事、玩角色扮演、陪玩数学小游戏，</p>
           <p>甚至辅助孩子认字、学儿歌。</p>
         </div>
+        <div class="definition-text" v-if="counter == 5">
+          <p>在正式开始前，请您务必复制并记录下您的验证码​！！！</p>
+          <p>此验证码是用户的唯一身份,</p>
+          <p>将用于后续问卷填写</p>
+          <p>您的验证码是：</p>
+          <p style="color: red;font-size: 30px;">{{ user_id }}</p>
+        </div>
       </div>
     </main>
 
@@ -57,7 +65,7 @@
         <span>上一页</span>
       </button>
       <button class="button2" @click="goNext">
-        {{ counter == 4 ? "开始对话": "下一页" }}
+        {{ counter == 5 ? "开始对话": "下一页" }}
       </button>
     </footer>
   </div>
@@ -73,12 +81,28 @@ export default {
   name: 'AIDefinition',
   data(){
     return({
-      counter: 1
+      counter: 1,
+      user_id: ''
     });
   },
+  mounted() {
+    const existingId = sessionStorage.getItem('user_id');
+    if (existingId) {
+      this.user_id = existingId;
+      console.log("Loaded existing user_id from sessionStorage:", this.user_id);
+    } else {
+      // 没有就生成新的
+      this.user_id = this.generateUserId();
+      sessionStorage.setItem('user_id', this.user_id);
+      console.log("Generated new user_id and stored in sessionStorage:", this.user_id);
+    }
+  },
   methods: {
+    generateUserId(){
+      return "user_" + Date.now() + "_" + Math.floor(Math.random() * 1000000);
+    },
     goNext() {
-      if(this.counter == 4) {
+      if(this.counter == 5) {
         this.$router.push('/choosetheme');
       }
       else{
